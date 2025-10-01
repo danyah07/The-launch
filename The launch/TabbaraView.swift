@@ -20,7 +20,7 @@ TabView{
             .tabItem{}
                     
                     
-            MainpageView()
+    ContentView()
             .tabItem{}
                     
                     

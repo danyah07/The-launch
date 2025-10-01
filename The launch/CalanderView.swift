@@ -8,23 +8,42 @@
 import SwiftUI
 import EventKit
 
-// تحويل HEX إلى لون
+// ==============================
+// تحويل HEX إلى لون (نسخة واحدة فقط في المشروع)
+// ==============================
 extension Color {
-    
+    init(hex: String) {
+        let scanner = Scanner(string: hex)
+        _ = scanner.scanString("#")
+        var rgb: UInt64 = 0
+        scanner.scanHexInt64(&rgb)
+        let r = Double((rgb >> 16) & 0xFF) / 255
+        let g = Double((rgb >> 8) & 0xFF) / 255
+        let b = Double(rgb & 0xFF) / 255
+        self.init(red: r, green: g, blue: b)
+    }
 }
 
+// ==============================
 // نموذج رسالة تنبيه
+// ==============================
 struct AlertMessage: Identifiable {
     var id = UUID()
     var message: String
 }
 
-struct Habit: Identifiable, Hashable {
+// ==============================
+// DailyHabit لتجنب تكرار اسم Habit
+// ==============================
+struct DailyHabit: Identifiable, Hashable {
     let id = UUID()
     let name: String
     var isCompleted: Bool = false
 }
 
+// ==============================
+// مدير التقويم
+// ==============================
 class CalendarManager: ObservableObject {
     private let eventStore = EKEventStore()
     @Published var authorizationStatus: EKAuthorizationStatus = .notDetermined
@@ -32,11 +51,10 @@ class CalendarManager: ObservableObject {
 
     @Published var daysWithAllTasksCompleted: Set<Int> = []
     @Published var selectedDay: Int? = nil
-    @Published var habitsByDay: [Int: [Habit]] = [:]
+    @Published var habitsByDay: [Int: [DailyHabit]] = [:]
 
     private let calendar = Calendar.current
 
-    // اليوم الحالي كامل: يوم، شهر، سنة
     let todayComponents: DateComponents
     @Published var currentMonth: Int
     @Published var currentYear: Int
@@ -46,7 +64,7 @@ class CalendarManager: ObservableObject {
         todayComponents = calendar.dateComponents([.day, .month, .year], from: now)
         currentMonth = todayComponents.month ?? 1
         currentYear = todayComponents.year ?? 2023
-        selectedDay = todayComponents.day // اختيار اليوم الحالي تلقائيًا
+        selectedDay = todayComponents.day
         checkAuthorization()
     }
 
@@ -75,12 +93,11 @@ class CalendarManager: ObservableObject {
         }
     }
 
-    func habits(for day: Int) -> [Habit] {
+    func habits(for day: Int) -> [DailyHabit] {
         habitsByDay[day] ?? defaultHabits()
     }
 
-    func toggleHabitCompletion(_ habit: Habit, for day: Int) {
-        // فقط للسماح بالتعديل على اليوم الحالي (نفس اليوم، الشهر والسنة)
+    func toggleHabitCompletion(_ habit: DailyHabit, for day: Int) {
         guard
             day == todayComponents.day,
             currentMonth == todayComponents.month,
@@ -104,13 +121,13 @@ class CalendarManager: ObservableObject {
         }
     }
 
-    func defaultHabits() -> [Habit] {
+    func defaultHabits() -> [DailyHabit] {
         [
-            Habit(name: "تنظيف الغرفة"),
-            Habit(name: "صلاة السنة"),
-            Habit(name: "شرب 1 لتر ماء"),
-            Habit(name: "قراءة 5 صفحات"),
-            Habit(name: "الجري 3 كم")
+            DailyHabit(name: "تنظيف الغرفة"),
+            DailyHabit(name: "صلاة السنة"),
+            DailyHabit(name: "شرب 1 لتر ماء"),
+            DailyHabit(name: "قراءة 5 صفحات"),
+            DailyHabit(name: "الجري 3 كم")
         ]
     }
 
@@ -122,12 +139,11 @@ class CalendarManager: ObservableObject {
                 let comps = calendar.dateComponents([.year, .month], from: newDate)
                 currentMonth = comps.month ?? currentMonth
                 currentYear = comps.year ?? currentYear
-                selectedDay = nil // إعادة تعيين اليوم المحدد عند تغيير الشهر
+                selectedDay = nil
             }
         }
     }
 
-    // للحصول على عدد الأيام في الشهر الحالي
     func daysInCurrentMonth() -> Int {
         let comps = DateComponents(year: currentYear, month: currentMonth)
         if let date = calendar.date(from: comps),
@@ -137,7 +153,6 @@ class CalendarManager: ObservableObject {
         return 30
     }
 
-    // اليوم الأول في الشهر الحالي (لتحديد بداية الأسبوع)
     func firstWeekdayOfCurrentMonth() -> Int {
         let comps = DateComponents(year: currentYear, month: currentMonth, day: 1)
         if let date = calendar.date(from: comps) {
@@ -145,8 +160,21 @@ class CalendarManager: ObservableObject {
         }
         return 1
     }
+
+    func currentMonthName() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ar")
+        formatter.dateFormat = "MMMM"
+        if let date = calendar.date(from: DateComponents(year: currentYear, month: currentMonth)) {
+            return formatter.string(from: date)
+        }
+        return ""
+    }
 }
 
+// ==============================
+// عرض كل يوم في التقويم
+// ==============================
 struct DayCellView: View {
     let day: String
     let isCompleted: Bool
@@ -177,10 +205,13 @@ struct DayCellView: View {
     }
 }
 
+// ==============================
+// شبكة عرض التقويم
+// ==============================
 struct CustomCalendarGrid: View {
     @ObservedObject var calendarManager: CalendarManager
 
-    let daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+    let daysOfWeek = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
     let columns = Array(repeating: GridItem(.flexible()), count: 7)
 
     var calendarDays: [String] {
@@ -226,6 +257,9 @@ struct CustomCalendarGrid: View {
     }
 }
 
+// ==============================
+// العرض الرئيسي للتقويم
+// ==============================
 struct CalenderView: View {
     @StateObject var calendarManager = CalendarManager()
     @State private var selectedTab = "Calendar"
@@ -235,27 +269,15 @@ struct CalenderView: View {
             if selectedTab == "Calendar" {
                 VStack(spacing: 10) {
                     HStack {
-                        Button(action: {
-                            calendarManager.moveMonth(by: -1)
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .font(.title2)
-                                .padding()
+                        Button(action: { calendarManager.moveMonth(by: -1) }) {
+                            Image(systemName: "chevron.left").font(.title2).padding()
                         }
-
                         Spacer()
-
-                        Text("\(calendarManager.currentYear) / \(calendarManager.currentMonth)")
+                        Text("\(calendarManager.currentYear) / \(calendarManager.currentMonthName())")
                             .font(.headline)
-
                         Spacer()
-
-                        Button(action: {
-                            calendarManager.moveMonth(by: 1)
-                        }) {
-                            Image(systemName: "chevron.right")
-                                .font(.title2)
-                                .padding()
+                        Button(action: { calendarManager.moveMonth(by: 1) }) {
+                            Image(systemName: "chevron.right").font(.title2).padding()
                         }
                     }
                     .padding(.horizontal)
@@ -280,18 +302,14 @@ struct CalenderView: View {
                                         .font(.title2)
                                         .foregroundColor(habit.isCompleted ? Color(hex: "6EA7DB") : .gray)
                                 }
-                                .contentShape(Rectangle()) // يجعل كامل صف المهمة قابل للنقر
+                                .contentShape(Rectangle())
                                 .opacity(
                                     calendarManager.currentYear == calendarManager.todayComponents.year &&
                                     calendarManager.currentMonth == calendarManager.todayComponents.month &&
                                     selectedDay == calendarManager.todayComponents.day ? 1 : 0.3
                                 )
                                 .onTapGesture {
-                                    if calendarManager.currentYear == calendarManager.todayComponents.year &&
-                                        calendarManager.currentMonth == calendarManager.todayComponents.month &&
-                                        selectedDay == calendarManager.todayComponents.day {
-                                        calendarManager.toggleHabitCompletion(habit, for: selectedDay)
-                                    }
+                                    calendarManager.toggleHabitCompletion(habit, for: selectedDay)
                                 }
                                 .padding(.vertical, 5)
                             }
@@ -304,62 +322,22 @@ struct CalenderView: View {
                             .padding()
                     }
                 }
-            } else if selectedTab == "Habits" {
-                Text("صفحة المهام (قيد التطوير)")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if selectedTab == "Achievement" {
-                Text("صفحة الإنجازات (قيد التطوير)")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
             Divider()
-
-            HStack(spacing: 6) {
-                VStack {
-                    Image(systemName: "list.bullet")
-                        .font(.title2)
-                    Text("Habits")
-                        .font(.caption2)
-                }
-                .frame(maxWidth: .infinity)
-                .foregroundColor(selectedTab == "Habits" ? Color(hex: "6EA7DB") : .gray)
-                .onTapGesture { selectedTab = "Habits" }
-
-                VStack {
-                    Image(systemName: "calendar")
-                        .font(.title2)
-                    Text("Calendar")
-                        .font(.caption2)
-                }
-                .frame(maxWidth: .infinity)
-                .foregroundColor(selectedTab == "Calendar" ? Color(hex: "6EA7DB") : .gray)
-                .onTapGesture { selectedTab = "Calendar" }
-
-                VStack {
-                    Image(systemName: "trophy")
-                        .font(.title2)
-                    Text("Achievement")
-                        .font(.caption)
-                }
-                .frame(maxWidth: .infinity)
-                .foregroundColor(selectedTab == "Achievement" ? Color(hex: "6EA7DB") : .gray)
-                .onTapGesture { selectedTab = "Achievement" }
-            }
-            .padding(.vertical, 6)
         }
         .alert(item: $calendarManager.alertMessage) { alertMsg in
             Alert(title: Text("تنبيه"), message: Text(alertMsg.message), dismissButton: .default(Text("حسناً")))
         }
-        .onAppear {
-            calendarManager.checkAuthorization()
-        }
+        .onAppear { calendarManager.checkAuthorization() }
     }
 }
 
-// معاينة الشاشة
+// ==============================
+// معاينة
+// ==============================
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         CalenderView()
     }
 }
-
