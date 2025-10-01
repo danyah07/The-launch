@@ -472,7 +472,7 @@ struct IconCircle: View {
 // ==============================
 // نقطة البداية للتطبيق
 // ==============================
-@main
+
 struct LAApp: App {
     var body: some Scene {
         WindowGroup {

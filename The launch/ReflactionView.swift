@@ -95,19 +95,20 @@ struct ReflectionScreenView: View {
 
                     Spacer()
 
-                    Button(action: {
-                        answers[currentIndex] = text
-                        if currentIndex < questions.count - 1 {
+                    // السهم الأيمن يظهر فقط إذا لم يكن السؤال الأخير
+                    if currentIndex < questions.count - 1 {
+                        Button(action: {
+                            answers[currentIndex] = text
                             currentIndex += 1
                             text = answers[currentIndex] ?? ""
                             onNext()
+                        }) {
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(Color(red: 0.582, green: 0.714, blue: 0.907))
                         }
-                    }) {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(Color(red: 0.582, green: 0.714, blue: 0.907))
+                        .padding(.trailing, 18)
                     }
-                    .padding(.trailing, 18)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
@@ -137,11 +138,14 @@ struct ReflectionScreenView: View {
 }
 
 // نقطة بداية التطبيق
+@main
+struct ReflectionApp: App {
     var body: some Scene {
         WindowGroup {
             JView()
         }
     }
+}
 
 #Preview {
     JView()
