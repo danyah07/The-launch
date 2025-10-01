@@ -6,13 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		6B81397C2E8C418D00DE6EA9 /* ReflactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B81397B2E8C416D00DE6EA9 /* ReflactionView.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		0E12326D2E8AE76600B43E10 /* The launch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The launch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6B81397B2E8C416D00DE6EA9 /* ReflactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflactionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,7 +34,6 @@
 			children = (
 				0E12326F2E8AE76600B43E10 /* The launch */,
 				0E12326E2E8AE76600B43E10 /* Products */,
-				6B81397B2E8C416D00DE6EA9 /* ReflactionView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -125,7 +119,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B81397C2E8C418D00DE6EA9 /* ReflactionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
