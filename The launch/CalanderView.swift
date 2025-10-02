@@ -624,62 +624,65 @@ struct CustomCalendarGrid: View {
 // ==============================
 struct CalenderView: View {
     @StateObject var calendarManager = CalendarManager()
+    @State private var selectedTab = "Calendar"
 
     var body: some View {
         VStack(spacing: 0) {
-            VStack(spacing: 10) {
-                HStack {
-                    Button(action: { calendarManager.moveMonth(by: -1) }) {
-                        Image(systemName: "chevron.left").font(.title2).padding()
-                    }
-                    Spacer()
-                    Text("\(calendarManager.currentYear)/\(calendarManager.currentMonthName())")
-                        .font(.headline)
-                    Spacer()
-                    Button(action: { calendarManager.moveMonth(by: 1) }) {
-                        Image(systemName: "chevron.right").font(.title2).padding()
-                    }
-                }
-                .padding(.horizontal)
-
-                CustomCalendarGrid(calendarManager: calendarManager)
-                    .padding(.horizontal)
-
-                Divider()
-
-                if let selectedDay = calendarManager.selectedDay {
-                    Text("المهام ليوم \(selectedDay)")
-                        .font(.headline)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                    List {
-                        ForEach(calendarManager.habits(for: selectedDay)) { habit in
-                            HStack {
-                                Text(habit.name)
-                                Spacer()
-                                Image(systemName: habit.isCompleted ? "checkmark.square.fill" : "square")
-                                    .font(.title2)
-                                    .foregroundColor(habit.isCompleted ? Color(hex: "6EA7DB") : .gray)
-                            }
-                            .contentShape(Rectangle())
-                            .opacity(
-                                calendarManager.currentYear == calendarManager.todayComponents.year &&
-                                calendarManager.currentMonth == calendarManager.todayComponents.month &&
-                                selectedDay == calendarManager.todayComponents.day ? 1 : 0.3
-                            )
-                            .onTapGesture {
-                                calendarManager.toggleHabitCompletion(habit, for: selectedDay)
-                            }
-                            .padding(.vertical, 5)
+            if selectedTab == "Calendar" {
+                VStack(spacing: 10) {
+                    HStack {
+                        Button(action: { calendarManager.moveMonth(by: -1) }) {
+                            Image(systemName: "chevron.left").font(.title2).padding()
+                        }
+                        Spacer()
+                        Text("\(calendarManager.currentYear) / \(calendarManager.currentMonthName())")
+                            .font(.headline)
+                        Spacer()
+                        Button(action: { calendarManager.moveMonth(by: 1) }) {
+                            Image(systemName: "chevron.right").font(.title2).padding()
                         }
                     }
-                    .listStyle(PlainListStyle())
-                    .frame(maxHeight: 300)
-                } else {
-                    Text("اختر يومًا من التقويم لعرض المهام")
-                        .foregroundColor(.gray)
-                        .padding()
+                    .padding(.horizontal)
+
+                    CustomCalendarGrid(calendarManager: calendarManager)
+                        .padding(.horizontal)
+
+                    Divider()
+
+                    if let selectedDay = calendarManager.selectedDay {
+                        Text("المهام ليوم \(selectedDay)")
+                            .font(.headline)
+                            .padding(.horizontal)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        List {
+                            ForEach(calendarManager.habits(for: selectedDay)) { habit in
+                                HStack {
+                                    Text(habit.name)
+                                    Spacer()
+                                    Image(systemName: habit.isCompleted ? "checkmark.square.fill" : "square")
+                                        .font(.title2)
+                                        .foregroundColor(habit.isCompleted ? Color(hex: "6EA7DB") : .gray)
+                                }
+                                .contentShape(Rectangle())
+                                .opacity(
+                                    calendarManager.currentYear == calendarManager.todayComponents.year &&
+                                    calendarManager.currentMonth == calendarManager.todayComponents.month &&
+                                    selectedDay == calendarManager.todayComponents.day ? 1 : 0.3
+                                )
+                                .onTapGesture {
+                                    calendarManager.toggleHabitCompletion(habit, for: selectedDay)
+                                }
+                                .padding(.vertical, 5)
+                            }
+                        }
+                        .listStyle(PlainListStyle())
+                        .frame(maxHeight: 300)
+                    } else {
+                        Text("اختر يومًا من التقويم لعرض المهام")
+                            .foregroundColor(.gray)
+                            .padding()
+                    }
                 }
             }
 
@@ -693,37 +696,10 @@ struct CalenderView: View {
 }
 
 // ==============================
-// التاب بار الرئيسي
-// ==============================
-struct MainTabView: View {
-    var body: some View {
-        TabView {
-            Text("Habits Screen")
-                .tabItem {
-                    Image(systemName: "line.horizontal.3")
-                    Text("Habits")
-                }
-
-            CalenderView()
-                .tabItem {
-                    Image(systemName: "calendar")
-                    Text("Calendar")
-                }
-
-            Text("Achievement Screen")
-                .tabItem {
-                    Image(systemName: "trophy")
-                    Text("Achievement")
-                }
-        }
-    }
-}
-
-// ==============================
 // معاينة
 // ==============================
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainTabView()
+        CalenderView()
     }
 }
