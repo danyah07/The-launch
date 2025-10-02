@@ -13,14 +13,14 @@ struct TabbarView: View {
     
     var body: some View {
         
-        
+        //صفحة التاب بار
         
 TabView{
-            ContentView()
+           CalenderView()
             .tabItem{}
                     
                     
-    ContentView()
+    NView()
             .tabItem{}
                     
                     
@@ -36,4 +36,7 @@ TabView{
         }
         
     }
+}
+#Preview {
+    TabbarView()
 }
