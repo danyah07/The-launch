@@ -13,7 +13,7 @@ struct HistoryView: View {
             
             Text("Every streak tells your\nstory of progress")
                 .font(.title2)
-                .multilineTextAlignment(.leading)
+                .multilineTextAlignment(.center)
                 .fontWeight(.bold)
                 .padding(.horizontal)
                 .lineSpacing(4)
