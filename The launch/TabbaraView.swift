@@ -7,36 +7,31 @@
 
 
 import SwiftUI
-//tab bar page
 
 struct TabbarView: View {
-    
     var body: some View {
-        
-        //صفحة التاب بار
-        
-TabView{
-           CalenderView()
-            .tabItem{}
-                    
-                    
-    NView()
-            .tabItem{}
-                    
-                    
+        TabView {
+            NView()
+                .tabItem {
+                    Image(systemName: "line.3.horizontal")
+                    Text("Habits")
+                }
             
-                    
-                
-             
+            CalenderView()
+                .tabItem {
+                    Image(systemName: "calendar")
+                    Text("Calendar")
+                }
             
-            
-            
-            
-            
+            HistoryView()
+                .tabItem {
+                    Image(systemName: "trophy")
+                    Text("History")
+                }
         }
-        
     }
 }
+
 #Preview {
     TabbarView()
 }
