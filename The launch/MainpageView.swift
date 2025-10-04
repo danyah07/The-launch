@@ -200,7 +200,11 @@ struct ContentView1: View {
             
             Spacer()
         }
+       
+        
         .alert("🎉 You've finished", isPresented: $showCompletionAlert) {
+           
+            
             Button("Reflection", role: .cancel) {}
         } message: {
             Text("your streak successfully")
