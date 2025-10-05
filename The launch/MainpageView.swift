@@ -8,10 +8,6 @@ import SwiftUI
 // ==============================
 // امتداد لتحويل HEX إلى ألوان Color
 // ==============================
-
-// ==============================
-// امتداد للوصول الآمن إلى عناصر المصفوفة
-// ==============================
 extension Collection {
     subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
@@ -51,7 +47,8 @@ struct ContentView1: View {
     @State private var selectedDate: Date? = nil
     @State private var currentWeekIndex = 4
     @State private var showCompletionAlert = false
-    @State private var showContentView2 = false // للتحكم بفتح الصفحة الثانية
+    @State private var showContentView2 = false
+    @State private var showReflectionView = false // للتحكم بفتح صفحة ReflectionView
     
     let calendar = Calendar.current
     let weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -153,6 +150,8 @@ struct ContentView1: View {
             
             List {
                 ForEach(habits.indices, id: \.self) { index in
+                    let isMissed = !habits[index].isChecked && !Calendar.current.isDateInToday(Date())
+                    
                     HStack {
                         HStack(spacing: 12) {
                             Text(habits[index].emoji)
@@ -160,6 +159,11 @@ struct ContentView1: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(habits[index].name)
                                     .font(.body)
+                                if isMissed {
+                                    Text("you missed 1 days")
+                                        .font(.caption2)
+                                        .foregroundColor(.red)
+                                }
                             }
                         }
                         
@@ -179,7 +183,7 @@ struct ContentView1: View {
                                 }) {
                                     Image(systemName: habits[index].isChecked ? "checkmark.circle.fill" : "circle")
                                         .font(.title2)
-                                        .foregroundColor(habits[index].isChecked ? .green : .gray)
+                                        .foregroundColor(habits[index].isChecked ? .green : (isMissed ? .red : .gray))
                                 }
                             }
                             Text("\(habits[index].progress)/\(habits[index].goal)")
@@ -188,7 +192,7 @@ struct ContentView1: View {
                         }
                     }
                     .padding()
-                    .background(Color(hex: "94B6E7").opacity(0.12))
+                    .background(isMissed ? Color.red.opacity(0.2) : Color(hex: "94B6E7").opacity(0.12))
                     .cornerRadius(12)
                     .padding(.horizontal, 8)
                 }
@@ -201,13 +205,19 @@ struct ContentView1: View {
             Spacer()
         }
        
-        
+        // كود التنبيه مع زر Reflection
         .alert("🎉 You've finished", isPresented: $showCompletionAlert) {
-           
-            
-            Button("Reflection", role: .cancel) {}
+            Button("Reflection") {
+                showReflectionView = true
+            }
         } message: {
             Text("your streak successfully")
+        }
+        
+        // فتح صفحة JView عند الضغط على الزر
+        .navigationBarBackButtonHidden(true)
+        .fullScreenCover(isPresented: $showReflectionView) {
+            JView()
         }
     }
 }
@@ -456,6 +466,16 @@ struct LAApp: App {
         WindowGroup {
             NView()
         }
+    }
+}
+
+// ==============================
+// تعديل JView فقط لإخفاء زر الباك
+// ==============================
+extension JView {
+    var bodyWithoutBackButton: some View {
+        self.body
+            .navigationBarBackButtonHidden(true)
     }
 }
 
