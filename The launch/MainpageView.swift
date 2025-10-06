@@ -48,7 +48,7 @@ struct ContentView1: View {
     @State private var showContentView2 = false
     @State private var showReflectionView = false // للتحكم بفتح صفحة ReflectionView
     
-//    @State private var showReflectionView = false
+   // @State private var showReflectionView = false
         @State private var savedAnswers: [String: String] = [:]
         @State private var showHistory = false
         @State private var completedHabit: Habit? = nil

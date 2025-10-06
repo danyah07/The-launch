@@ -11,7 +11,7 @@ import SwiftUI
 struct TabbarView: View {
     var body: some View {
         TabView {
-            NView()
+           NView()
                 .tabItem {
                     Image(systemName: "line.3.horizontal")
                     Text("Habits")
@@ -33,7 +33,7 @@ completedHabit: Habit(name: "Reading", emoji: "📚", progress: 30, goal: 30)
                     Image(systemName: "trophy")
                     Text("History")
                 }
-        }
+        }.tint(Color(red: 0.64, green: 0.77, blue: 0.96))
     }
 }
 

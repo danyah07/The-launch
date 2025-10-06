@@ -26,7 +26,8 @@ struct HistoryView: View {
                     .padding(.bottom, 30)
                 
                 ScrollView {
-                    VStack(spacing: 20) {
+                    // بوكس واحد لكل شي
+                    VStack(alignment: .leading, spacing: 20) {
                         // معلومات العادة المكتملة
                         if let habit = completedHabit {
                             VStack(alignment: .leading, spacing: 12) {
@@ -47,43 +48,36 @@ struct HistoryView: View {
                                     }
                                 }
                             }
-                            .padding(20)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.white)
-                                    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
-                            )
-                            .padding(.horizontal, 20)
+                            
+                            Divider()
+                                .padding(.vertical, 10)
                         }
                         
                         // الأسئلة والأجوبة
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("Your Reflections")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.black)
-                            
-                            ForEach(Array(answers.keys.sorted()), id: \.self) { question in
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(question)
-                                        .font(.system(size: 16, weight: .semibold))
-                                        .foregroundColor(.black)
-                                    
-                                    Text(answers[question] ?? "")
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.gray)
-                                }
+                        Text("Your Reflections")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.black)
+                        
+                        ForEach(Array(answers.keys.sorted()), id: \.self) { question in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(question)
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.black)
+                                
+                                Text(answers[question] ?? "")
+                                    .font(.system(size: 15))
+                                    .foregroundColor(.gray)
                             }
                         }
-                        .padding(20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.white)
-                                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
-                        )
-                        .padding(.horizontal, 20)
                     }
+                    .padding(20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.white)
+                            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
+                    )
+                    .padding(.horizontal, 20)
                     .padding(.vertical, 10)
                 }
                 
@@ -100,11 +94,11 @@ struct HistoryView: View {
             "Question 1": "Answer 1",
             "Question 2": "Answer 2"
         ],
-        completedHabit: .some (Habit (
+        completedHabit: Habit(
             name: "Reading",
             emoji: "📚",
             progress: 30,
             goal: 30
         )
     )
-)}
+}
