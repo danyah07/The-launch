@@ -24,8 +24,9 @@ struct TabbarView: View {
                 }
             
 HistoryView ( answers: [
-    "Question 1": "Answer 1",
-    "Question 2": "Answer 2"
+    "How do you feel about yourself now vs. day one?": "I feel more prodictive.",
+    
+    "If you had to restart your streak, what would you change?": "I would not miss any days"
 ],
 completedHabit: Habit(name: "Reading", emoji: "📚", progress: 30, goal: 30)
 )

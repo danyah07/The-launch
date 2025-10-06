@@ -25,11 +25,13 @@ struct JView: View {
 
 // هنا تعريف ReflectionScreenView المعدّل
 struct ReflectionScreenView: View {
+    
     let questions: [String]
     let showSave: Bool
     let onPrevious: () -> Void
     let onNext: () -> Void
     
+    @State private var showNextPage = false
     @State private var text: String = ""
     @State private var currentIndex: Int = 0
     @State private var answers: [Int: String] = [:]
@@ -130,36 +132,29 @@ struct ReflectionScreenView: View {
                         }
                         
                         NotificationCenter.default.post(name: NSNotification.Name("SaveAnswers"), object: formattedAnswers)
+                        
+                        showNextPage = true // هذا يجعل الزر يفتح الصفحة التالية
                     }) {
-                        
-                        
-                        
-                            Text("Save")
-                                .font(.system(size: 16, weight: .semibold))
-                                .frame(width: 180, height: 44)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 18)
-                                        .fill(Color(red: 0.64, green: 0.77, blue: 0.96))
-                                )
-                                .foregroundColor(.white)
-                        }
-                        .padding(.bottom, 28)
+                        Text("Save")
+                            .font(.system(size: 16, weight: .semibold))
+                            .frame(width: 180, height: 44)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .fill(Color(red: 0.64, green: 0.77, blue: 0.96))
+                            )
+                            .foregroundColor(.white)
                     }
+                    .padding(.bottom, 28)
+                    
                 }
             }
         }
+        
+        
+       }
     }
     
-    // نقطة بداية التطبيق
-    @main
-    struct ReflectionApp: App {
-        var body: some Scene {
-            WindowGroup {
-                JView()
-            }
-        }
-    }
-    
+
     #Preview {
         JView()
     }
