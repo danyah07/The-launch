@@ -7,57 +7,47 @@
 
 import SwiftUI
 
+// هذا هو View الأساسي اللي راح يعرض ReflectionScreenView
 struct JView: View {
-    @State private var savedAnswers: [String: String] = [:]
-    @State private var showHistory = false
-    
     var body: some View {
-        NavigationStack {
-            ReflectionScreenView(
-                questions: [
-                    "How do you feel about yourself now vs. day one?",
-                    "If you had to restart your streak, what would you change?",
-                    "What did you learn about yourself today?"
-                ],
-                showSave: true,
-                onPrevious: { print("Previous pressed") },
-                onNext: { print("Next pressed") }
-            )
-            .navigationDestination(isPresented: $showHistory) {
-                HistoryView(answers: savedAnswers)
-            }
-            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("SaveAnswers"))) { notification in
-                if let answers = notification.object as? [String: String] {
-                    savedAnswers = answers
-                    showHistory = true
-                }
-            }
-        }
+        ReflectionScreenView(
+            questions: [
+                "How do you feel about yourself now vs. day one?",
+                "If you had to restart your streak, what would you change?",
+                "What did you learn about yourself today?"
+            ],
+            showSave: true,
+            onPrevious: { print("Previous pressed") },
+            onNext: { print("Next pressed") }
+        )
     }
 }
 
+// هنا تعريف ReflectionScreenView المعدّل
 struct ReflectionScreenView: View {
     let questions: [String]
     let showSave: Bool
     let onPrevious: () -> Void
     let onNext: () -> Void
-
+    
     @State private var text: String = ""
     @State private var currentIndex: Int = 0
     @State private var answers: [Int: String] = [:]
-
+    
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
-
+            
             VStack {
+                // عنوان الصفحة
                 Text("Reflection")
                     .font(.system(size: 28, weight: .semibold))
                     .foregroundColor(Color(red: 0.117, green: 0.206, blue: 0.339))
                     .padding(.top, 40)
-
+                
                 Spacer()
-
+                
+                // السؤال مع حماية
                 if !questions.isEmpty && currentIndex < questions.count {
                     Text(questions[currentIndex])
                         .font(.system(size: 22, weight: .medium))
@@ -70,7 +60,8 @@ struct ReflectionScreenView: View {
                         .foregroundColor(Color.gray)
                         .padding(.horizontal, 20)
                 }
-
+                
+                // حقل النص
                 TextField("Text field...", text: $text)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 18)
@@ -85,7 +76,8 @@ struct ReflectionScreenView: View {
                     )
                     .padding(.horizontal, 40)
                     .padding(.top, 20)
-
+                
+                // الأسهم للتنقل
                 HStack {
                     Button(action: {
                         if currentIndex > 0 {
@@ -100,9 +92,10 @@ struct ReflectionScreenView: View {
                             .foregroundColor(Color(red: 0.58, green: 0.714, blue: 0.907))
                     }
                     .padding(.leading, 18)
-
+                    
                     Spacer()
-
+                    
+                    // السهم الأيمن يظهر فقط إذا لم يكن السؤال الأخير
                     if currentIndex < questions.count - 1 {
                         Button(action: {
                             answers[currentIndex] = text
@@ -119,10 +112,13 @@ struct ReflectionScreenView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
-
+                
                 Spacer()
-
+                
+                // زر الحفظ
                 if showSave && currentIndex == questions.count - 1 && !questions.isEmpty {
+                    
+                    
                     Button(action: {
                         answers[currentIndex] = text
                         
@@ -135,32 +131,37 @@ struct ReflectionScreenView: View {
                         
                         NotificationCenter.default.post(name: NSNotification.Name("SaveAnswers"), object: formattedAnswers)
                     }) {
-                        Text("Save")
-                            .font(.system(size: 16, weight: .semibold))
-                            .frame(width: 180, height: 44)
-                            .background(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .fill(Color(red: 0.64, green: 0.77, blue: 0.96))
-                            )
-                            .foregroundColor(.white)
+                        
+                        
+                        
+                            Text("Save")
+                                .font(.system(size: 16, weight: .semibold))
+                                .frame(width: 180, height: 44)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .fill(Color(red: 0.64, green: 0.77, blue: 0.96))
+                                )
+                                .foregroundColor(.white)
+                        }
+                        .padding(.bottom, 28)
                     }
-                    .padding(.bottom, 28)
                 }
             }
         }
     }
-}
-
-// أضف هذا الكود هنا!
-@main
-struct MyApp: App {
-    var body: some Scene {
-        WindowGroup {
-            JView()
+    
+    // نقطة بداية التطبيق
+    @main
+    struct ReflectionApp: App {
+        var body: some Scene {
+            WindowGroup {
+                JView()
+            }
         }
     }
-}
+    
+    #Preview {
+        JView()
+    }
 
-#Preview {
-    JView()
-}
+

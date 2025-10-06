@@ -32,9 +32,7 @@ struct Habit: Identifiable {
 struct NView: View {
     @State private var habits: [Habit] = []
     var body: some View {
-        NavigationStack {
-            ContentView1(habits: $habits)
-        }
+//        NavigationStack {ContentView1(habits: $habits)}
     }
 }
 
@@ -49,6 +47,11 @@ struct ContentView1: View {
     @State private var showCompletionAlert = false
     @State private var showContentView2 = false
     @State private var showReflectionView = false // للتحكم بفتح صفحة ReflectionView
+    
+    @State private var showReflectionView = false
+        @State private var savedAnswers: [String: String] = [:]
+        @State private var showHistory = false
+        @State private var completedHabit: Habit? = nil
     
     let calendar = Calendar.current
     let weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -172,12 +175,13 @@ struct ContentView1: View {
                         VStack(spacing: 4) {
                             HStack(spacing: 4) {
                                 Text("🔥").font(.caption)
-                                Button(action: {
-                                    if !habits[index].isChecked && habits[index].progress < habits[index].goal {
-                                        habits[index].progress += 1
-                                        habits[index].isChecked = true
-                                        if habits[index].progress >= habits[index].goal {
-                                            showCompletionAlert = true
+        Button(action: {
+                if !habits[index].isChecked && habits[index].progress < habits[index].goal {
+                    habits[index].progress += 1
+                   habits[index].isChecked = true
+if habits[index].progress >= habits[index].goal {
+    completedHabit = habits[index]
+showCompletionAlert = true
                                         }
                                     }
                                 }) {
@@ -205,19 +209,13 @@ struct ContentView1: View {
             Spacer()
         }
        
-        // كود التنبيه مع زر Reflection
+       
         .alert("🎉 You've finished", isPresented: $showCompletionAlert) {
-            Button("Reflection") {
-                showReflectionView = true
-            }
+           
+            
+            Button("Reflection", role: .cancel) {showReflectionView = true}
         } message: {
             Text("your streak successfully")
-        }
-        
-        // فتح صفحة JView عند الضغط على الزر
-        .navigationBarBackButtonHidden(true)
-        .fullScreenCover(isPresented: $showReflectionView) {
-            JView()
         }
     }
 }
