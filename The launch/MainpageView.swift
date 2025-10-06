@@ -32,7 +32,7 @@ struct Habit: Identifiable {
 struct NView: View {
     @State private var habits: [Habit] = []
     var body: some View {
-//        NavigationStack {ContentView1(habits: $habits)}
+       NavigationStack {ContentView1(habits: $habits)}
     }
 }
 
@@ -48,7 +48,7 @@ struct ContentView1: View {
     @State private var showContentView2 = false
     @State private var showReflectionView = false // للتحكم بفتح صفحة ReflectionView
     
-    @State private var showReflectionView = false
+//    @State private var showReflectionView = false
         @State private var savedAnswers: [String: String] = [:]
         @State private var showHistory = false
         @State private var completedHabit: Habit? = nil
