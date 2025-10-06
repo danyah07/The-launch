@@ -636,7 +636,7 @@ struct CalenderView: View {
                             .padding()
                     }
                     Spacer()
-                    Text("\(calendarManager.currentYear) / \(calendarManager.currentMonthName())")
+                    Text("\(calendarManager.currentMonthName()) \(String(format: "%d", calendarManager.currentYear))")
                         .font(.title2)
                         .fontWeight(.bold)
                     Spacer()
