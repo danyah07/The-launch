@@ -366,7 +366,6 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 */
-
 import SwiftUI
 import EventKit
 
@@ -548,18 +547,18 @@ struct DayCellView: View {
             if isSelected {
                 Circle()
                     .fill(Color(hex: "6EA7DB").opacity(0.3))
-                    .frame(width: 35, height: 35)
+                    .frame(width: 50, height: 50)
             }
             if isCompleted {
                 Circle()
                     .stroke(Color(hex: "6EA7DB"), lineWidth: 3)
-                    .frame(width: 35, height: 35)
+                    .frame(width: 50, height: 50)
             }
             Text(day)
-                .font(.body)
+                .font(.title3)
                 .fontWeight(.medium)
                 .foregroundColor(isCompleted ? Color(hex: "6EA7DB") : .primary)
-                .padding(5)
+                .padding(8)
         }
         .onTapGesture {
             onTap()
@@ -573,7 +572,7 @@ struct DayCellView: View {
 struct CustomCalendarGrid: View {
     @ObservedObject var calendarManager: CalendarManager
 
-    let daysOfWeek = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
+    let daysOfWeek = ["sun", "mon", "Thu", "wed", "Tru", "fri", "sat"]
     let columns = Array(repeating: GridItem(.flexible()), count: 7)
 
     var calendarDays: [String] {
@@ -584,21 +583,22 @@ struct CustomCalendarGrid: View {
     }
 
     var body: some View {
-        VStack(spacing: 15) {
+        VStack(spacing: 25) {
             HStack {
                 ForEach(daysOfWeek, id: \.self) { day in
                     Text(day)
-                        .font(.caption)
+                        .font(.body)
+                        .fontWeight(.semibold)
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity)
                 }
             }
             .padding(.horizontal)
 
-            LazyVGrid(columns: columns, spacing: 15) {
+            LazyVGrid(columns: columns, spacing: 25) {
                 ForEach(calendarDays, id: \.self) { day in
                     if day.isEmpty {
-                        Text("").frame(height: 35)
+                        Text("").frame(height: 50)
                     } else {
                         let dayInt = Int(day) ?? 0
                         DayCellView(
@@ -609,13 +609,13 @@ struct CustomCalendarGrid: View {
                                 calendarManager.selectedDay = dayInt
                             }
                         )
-                        .frame(height: 39)
+                        .frame(height: 50)
                     }
                 }
             }
             .padding(.horizontal)
         }
-        .padding(.vertical, 40)
+        .padding(.vertical, 50)
     }
 }
 
@@ -628,70 +628,34 @@ struct CalenderView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if selectedTab == "Calendar" {
-                VStack(spacing: 10) {
-                    HStack {
-                        Button(action: { calendarManager.moveMonth(by: -1) }) {
-                            Image(systemName: "chevron.left").font(.title2).padding()
-                        }
-                        Spacer()
-                        Text("\(calendarManager.currentYear) / \(calendarManager.currentMonthName())")
-                            .font(.headline)
-                        Spacer()
-                        Button(action: { calendarManager.moveMonth(by: 1) }) {
-                            Image(systemName: "chevron.right").font(.title2).padding()
-                        }
+            VStack(spacing: 20) {
+                HStack {
+                    Button(action: { calendarManager.moveMonth(by: -1) }) {
+                        Image(systemName: "chevron.left")
+                            .font(.title)
+                            .padding()
                     }
-                    .padding(.horizontal)
-
-                    CustomCalendarGrid(calendarManager: calendarManager)
-                        .padding(.horizontal)
-
-                    Divider()
-
-                    if let selectedDay = calendarManager.selectedDay {
-                        Text("المهام ليوم \(selectedDay)")
-                            .font(.headline)
-                            .padding(.horizontal)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        List {
-                            ForEach(calendarManager.habits(for: selectedDay)) { habit in
-                                HStack {
-                                    Text(habit.name)
-                                    Spacer()
-                                    Image(systemName: habit.isCompleted ? "checkmark.square.fill" : "square")
-                                        .font(.title2)
-                                        .foregroundColor(habit.isCompleted ? Color(hex: "6EA7DB") : .gray)
-                                }
-                                .contentShape(Rectangle())
-                                .opacity(
-                                    calendarManager.currentYear == calendarManager.todayComponents.year &&
-                                    calendarManager.currentMonth == calendarManager.todayComponents.month &&
-                                    selectedDay == calendarManager.todayComponents.day ? 1 : 0.3
-                                )
-                                .onTapGesture {
-                                    calendarManager.toggleHabitCompletion(habit, for: selectedDay)
-                                }
-                                .padding(.vertical, 5)
-                            }
-                        }
-                        .listStyle(PlainListStyle())
-                        .frame(maxHeight: 300)
-                    } else {
-                        Text("اختر يومًا من التقويم لعرض المهام")
-                            .foregroundColor(.gray)
+                    Spacer()
+                    Text("\(calendarManager.currentYear) / \(calendarManager.currentMonthName())")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Spacer()
+                    Button(action: { calendarManager.moveMonth(by: 1) }) {
+                        Image(systemName: "chevron.right")
+                            .font(.title)
                             .padding()
                     }
                 }
-            }
+                .padding(.horizontal)
+                .padding(.top, 20)
 
-            Divider()
+                CustomCalendarGrid(calendarManager: calendarManager)
+                    .padding(.horizontal)
+                
+                Spacer()
+            }
         }
-        .alert(item: $calendarManager.alertMessage) { alertMsg in
-            Alert(title: Text("تنبيه"), message: Text(alertMsg.message), dismissButton: .default(Text("حسناً")))
-        }
-        .onAppear { calendarManager.checkAuthorization() }
+        
     }
 }
 
