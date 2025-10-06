@@ -524,7 +524,7 @@ class CalendarManager: ObservableObject {
 
     func currentMonthName() -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ar")
+        formatter.locale = Locale(identifier: "an")
         formatter.dateFormat = "MMMM"
         if let date = calendar.date(from: DateComponents(year: currentYear, month: currentMonth)) {
             return formatter.string(from: date)
