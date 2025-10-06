@@ -208,14 +208,14 @@ showCompletionAlert = true
             
             Spacer()
         }
-       
-       
-        .alert("🎉 You've finished", isPresented: $showCompletionAlert) {
+       .alert("🎉 You've finished", isPresented: $showCompletionAlert) {
            
-            
             Button("Reflection", role: .cancel) {showReflectionView = true}
         } message: {
             Text("your streak successfully")
+        }
+        .sheet(isPresented: $showReflectionView) {
+            JView()
         }
     }
 }
