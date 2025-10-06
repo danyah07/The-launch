@@ -23,11 +23,12 @@ struct TabbarView: View {
                     Text("Calendar")
                 }
             
-            HistoryView ( answers: [
-                "How do you feel about yourself now vs. day one?": "I feel much more confident!",
-                "If you had to restart your streak, what would you change?": "Focus more on consistency.",
-                "What did you learn about yourself today?": "I can push through hard times."
-            ])
+HistoryView ( answers: [
+    "Question 1": "Answer 1",
+    "Question 2": "Answer 2"
+],
+completedHabit: Habit(name: "Reading", emoji: "📚", progress: 30, goal: 30)
+)
                 .tabItem {
                     Image(systemName: "trophy")
                     Text("History")

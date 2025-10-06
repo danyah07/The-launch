@@ -9,13 +9,13 @@ import SwiftUI
 
 struct HistoryView: View {
     let answers: [String: String]
+    let completedHabit: Habit?
     
     var body: some View {
         ZStack {
             Color(.systemGroupedBackground).ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // العنوان الرئيسي
                 Text("Every streak tells your\nstory of progress")
                     .font(.title2)
                     .multilineTextAlignment(.center)
@@ -25,32 +25,66 @@ struct HistoryView: View {
                     .padding(.top, 40)
                     .padding(.bottom, 30)
                 
-                // ScrollView للأسئلة والأجوبة
                 ScrollView {
-                    // بوكس واحد لكل الأسئلة والأجوبة
-                    VStack(alignment: .leading, spacing: 20) {
-                        ForEach(Array(answers.keys.sorted()), id: \.self) { question in
-                            VStack(alignment: .leading, spacing: 8) {
-                                // السؤال
-                                Text(question)
-                                    .font(.system(size: 16, weight: .semibold))
+                    VStack(spacing: 20) {
+                        // معلومات العادة المكتملة
+                        if let habit = completedHabit {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Completed Habit")
+                                    .font(.system(size: 18, weight: .bold))
                                     .foregroundColor(.black)
                                 
-                                // الجواب
-                                Text(answers[question] ?? "")
-                                    .font(.system(size: 15))
-                                    .foregroundColor(.gray)
+                                HStack(spacing: 12) {
+                                    Text(habit.emoji)
+                                        .font(.system(size: 40))
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(habit.name)
+                                            .font(.system(size: 20, weight: .semibold))
+                                        Text("Goal: \(habit.goal) days streak")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                            }
+                            .padding(20)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.white)
+                                    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
+                            )
+                            .padding(.horizontal, 20)
+                        }
+                        
+                        // الأسئلة والأجوبة
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Your Reflections")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.black)
+                            
+                            ForEach(Array(answers.keys.sorted()), id: \.self) { question in
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(question)
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(.black)
+                                    
+                                    Text(answers[question] ?? "")
+                                        .font(.system(size: 15))
+                                        .foregroundColor(.gray)
+                                }
                             }
                         }
+                        .padding(20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.white)
+                                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
+                        )
+                        .padding(.horizontal, 20)
                     }
-                    .padding(20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.white)
-                            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 3)
-                    )
-                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
                 }
                 
                 Spacer()
@@ -61,9 +95,16 @@ struct HistoryView: View {
 }
 
 #Preview {
-    HistoryView(answers: [
-        "How do you feel about yourself now vs. day one?": "I feel much more confident!",
-        "If you had to restart your streak, what would you change?": "Focus more on consistency.",
-        "What did you learn about yourself today?": "I can push through hard times."
-    ])
-}
+    HistoryView(
+        answers: [
+            "Question 1": "Answer 1",
+            "Question 2": "Answer 2"
+        ],
+        completedHabit: .some (Habit (
+            name: "Reading",
+            emoji: "📚",
+            progress: 30,
+            goal: 30
+        )
+    )
+)}
